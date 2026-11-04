@@ -119,12 +119,7 @@ export default function RecordDetailDrawer({
                 </Button>
               ) : null}
               {onDelete ? (
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    if (window.confirm("¿Eliminar este registro?")) onDelete();
-                  }}
-                >
+                <Button variant="destructive" onClick={onDelete}>
                   Eliminar
                 </Button>
               ) : null}

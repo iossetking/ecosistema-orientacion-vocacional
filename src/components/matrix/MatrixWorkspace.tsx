@@ -7,6 +7,15 @@ import MatrixBoard from "./MatrixBoard";
 import RecordFormModal from "./RecordFormModal";
 import RecordDetailDrawer from "./RecordDetailDrawer";
 import { deleteRecord } from "@/app/actions/records";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type ModalState =
   | { mode: "closed" }
@@ -14,9 +23,10 @@ type ModalState =
   | { mode: "edit"; record: MatrixRecord };
 
 export default function MatrixWorkspace() {
-  const { snapshot } = useMatrix();
+  const { snapshot, removeRecord } = useMatrix();
   const [modalState, setModalState] = useState<ModalState>({ mode: "closed" });
   const [detailRecord, setDetailRecord] = useState<MatrixRecord | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<MatrixRecord | null>(null);
 
   return (
     <main>
@@ -67,13 +77,39 @@ export default function MatrixWorkspace() {
             setDetailRecord(null);
           }}
           onDelete={() => {
-            if (window.confirm("¿Eliminar este registro?")) {
-              void deleteRecord(detailRecord.id);
-              setDetailRecord(null);
-            }
+            setPendingDelete(detailRecord);
+            setDetailRecord(null);
           }}
         />
       ) : null}
+
+      <Dialog open={!!pendingDelete} onOpenChange={(o) => (!o ? setPendingDelete(null) : null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Eliminar este registro?</DialogTitle>
+            <DialogDescription>
+              Esta acción no se puede deshacer. El registro se eliminará permanentemente.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingDelete(null)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (pendingDelete) {
+                  void deleteRecord(pendingDelete.id);
+                  removeRecord?.(pendingDelete.id);
+                }
+                setPendingDelete(null);
+              }}
+            >
+              Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

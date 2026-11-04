@@ -17,6 +17,7 @@ import {
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from "d3-force";
 import "@xyflow/react/dist/style.css";
 import type { CatalogDependency, MatrixRecord } from "@/types/matrix";
+import { getDimension } from "@/constants/matrix-config";
 import {
   buildGraph,
   filterRecords,
@@ -65,7 +66,7 @@ function RecordNodeView({ data }: NodeProps) {
       <p className="line-clamp-2 text-[10px] font-medium leading-tight text-slate-700">
         {node.label}
       </p>
-      <p className="mt-1 text-[9px] text-slate-400">Dimensión {node.dimensionId}</p>
+      <p className="mt-1 text-[9px] text-slate-400">{node.dimensionName ?? getDimension(node.dimensionId ?? 0)?.name ?? `Dimensión ${node.dimensionId}`}</p>
     </div>
   );
 }
