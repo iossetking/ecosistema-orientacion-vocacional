@@ -37,7 +37,12 @@ export default function MatrixBoard({ snapshot, onOpenRecord, onAddRecord }: Mat
 
       <div className="overflow-x-auto lg:overflow-visible">
         <div className="grid min-w-[980px] grid-cols-[180px_repeat(5,minmax(140px,1fr))] gap-2 lg:min-w-0">
-          <div />
+          <div
+            className="flex min-h-24 items-center justify-center rounded-lg bg-slate-200 p-3 text-center text-sm font-semibold text-slate-700"
+            data-testid="matrix-title"
+          >
+            Matriz etapa × dimensión
+          </div>
           {STAGES.map((stage) => (
             <StageHeader key={stage.id} stageId={stage.id} />
           ))}
