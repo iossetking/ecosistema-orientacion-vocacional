@@ -30,7 +30,7 @@ export type GraphEdge = {
   kind: "stage" | "dependency";
 }
 
-export function filterRecords(records: MatrixRecord[], filters: GraphFilters): MatrixRecord[] {
+export function filterRecords(records: MatrixRecord[], filters: GraphFilters = {}): MatrixRecord[] {
   return records.filter((r) => {
     if (filters.stageIds && filters.stageIds.length > 0) {
       const involved = [r.primary_stage_id, ...r.related_stage_ids];
@@ -76,7 +76,7 @@ export function buildGraph(
     });
 
     if (mode === "stages" || mode === "full") {
-      const stages = [record.primary_stage_id, ...record.related_stage_ids];
+      const stages = [...new Set([record.primary_stage_id, ...record.related_stage_ids])];
       for (const stageId of stages) {
         stageHubIds.add(stageId);
         edges.push({
@@ -89,7 +89,7 @@ export function buildGraph(
     }
 
     if (mode === "dependencies" || mode === "full") {
-      for (const dependencyId of record.dependency_ids) {
+      for (const dependencyId of [...new Set(record.dependency_ids)]) {
         dependencyHubIds.add(dependencyId);
         edges.push({
           id: `e:r:${record.id}-d:${dependencyId}`,

@@ -42,7 +42,8 @@ export async function createRecord(input: unknown): Promise<ActionResult> {
       record_id: data.id,
       dependency_id,
     }));
-    await sb.from("record_dependencies").insert(links);
+    const { error: linkError } = await sb.from("record_dependencies").insert(links);
+    if (linkError) return { ok: false, error: "No se pudo guardar las dependencias del registro." };
   }
   return { ok: true };
 }
@@ -65,7 +66,8 @@ export async function updateRecord(id: string, input: unknown): Promise<ActionRe
       record_id: id,
       dependency_id,
     }));
-    await sb.from("record_dependencies").insert(links);
+    const { error: linkError } = await sb.from("record_dependencies").insert(links);
+    if (linkError) return { ok: false, error: "No se pudo actualizar las dependencias del registro." };
   }
   return { ok: true };
 }

@@ -50,5 +50,8 @@
   },
   "engines": {
     "node": ">=20.19.0"
+  },
+  "overrides": {
+    "magic-string": "0.30.21"
   }
 }

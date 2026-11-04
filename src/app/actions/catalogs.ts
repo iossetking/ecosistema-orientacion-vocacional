@@ -53,7 +53,10 @@ export async function updateCatalogItem(kind: CatalogKind, input: unknown): Prom
 
   const sb = getServerSupabase();
   const { id, ...changes } = parsed.data;
-  const { error } = await sb.from(CATALOG_TABLES[kind]).update(changes).eq("id", id);
+  const cleanChanges = Object.fromEntries(
+    Object.entries(changes).filter(([, v]) => v !== undefined),
+  );
+  const { error } = await sb.from(CATALOG_TABLES[kind]).update(cleanChanges).eq("id", id);
   if (error) return { ok: false, error: "No se pudo actualizar el elemento." };
   return { ok: true };
 }
@@ -65,6 +68,7 @@ export async function swapCatalogItems(
 ): Promise<ActionResult> {
   const user = await requireUser();
   if (!user) return { ok: false, error: "Tu sesión expiró. Vuelve a ingresar." };
+  if (!kindSchema.safeParse(kind).success) return { ok: false, error: "Catálogo inválido." };
   const sb = getServerSupabase();
   const table = CATALOG_TABLES[kind];
   const { data } = await sb.from(table).select("id, sort_order").in("id", [idA, idB]);
@@ -79,6 +83,7 @@ export async function swapCatalogItems(
 export async function deleteCatalogItem(kind: CatalogKind, id: string): Promise<ActionResult> {
   const user = await requireUser();
   if (!user) return { ok: false, error: "Tu sesión expiró. Vuelve a ingresar." };
+  if (!kindSchema.safeParse(kind).success) return { ok: false, error: "Catálogo inválido." };
   if (!z.string().uuid().safeParse(id).success) return { ok: false, error: "Elemento inválido." };
   const sb = getServerSupabase();
   const { error } = await sb.from(CATALOG_TABLES[kind]).delete().eq("id", id);
