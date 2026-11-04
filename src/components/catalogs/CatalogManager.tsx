@@ -1,0 +1,123 @@
+"use client";
+
+import { useState } from "react";
+import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { useMatrix } from "@/hooks/useRealtimeMatrix";
+import {
+  createCatalogItem,
+  deleteCatalogItem,
+  swapCatalogItems,
+  updateCatalogItem,
+} from "@/app/actions/catalogs";
+import type { CatalogKind } from "@/types/matrix";
+
+interface PanelConfig {
+  kind: CatalogKind;
+  title: string;
+  items: { id: string; name: string; is_active: boolean; sort_order: number }[];
+}
+
+export default function CatalogManager() {
+  const { snapshot } = useMatrix();
+  const [newNames, setNewNames] = useState<Record<string, string>>({});
+
+  const panels: PanelConfig[] = [
+    { kind: "action_types", title: "Tipos de acción o recurso", items: snapshot.actionTypes },
+    { kind: "modalities", title: "Modalidades", items: snapshot.modalities },
+    { kind: "dependencies", title: "Dependencias participantes", items: snapshot.dependencies },
+  ];
+
+  async function handleAdd(kind: CatalogKind) {
+    const name = newNames[kind]?.trim();
+    if (!name) return;
+    await createCatalogItem(kind, { name });
+    setNewNames((s) => ({ ...s, [kind]: "" }));
+  }
+
+  return (
+    <main className="grid gap-4 p-4 lg:grid-cols-3">
+      {panels.map((panel) => (
+        <section key={panel.kind} className="rounded-lg border bg-white p-4">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900">{panel.title}</h2>
+
+          <ul className="mb-3 space-y-1.5">
+            {panel.items.map((item, index) => (
+              <li
+                key={item.id}
+                className="flex items-center gap-2 rounded-md border border-slate-200 px-2 py-1.5 text-sm"
+              >
+                <span className={`flex-1 ${item.is_active ? "" : "text-slate-400 line-through"}`}>
+                  {item.name}
+                </span>
+                <button
+                  type="button"
+                  aria-label={`Subir ${item.name}`}
+                  disabled={index === 0}
+                  className="text-slate-400 transition hover:text-slate-700 disabled:opacity-30"
+                  onClick={() =>
+                    void swapCatalogItems(panel.kind, item.id, panel.items[index - 1].id)
+                  }
+                >
+                  <ArrowUp className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Bajar ${item.name}`}
+                  disabled={index === panel.items.length - 1}
+                  className="text-slate-400 transition hover:text-slate-700 disabled:opacity-30"
+                  onClick={() =>
+                    void swapCatalogItems(panel.kind, item.id, panel.items[index + 1].id)
+                  }
+                >
+                  <ArrowDown className="size-3.5" />
+                </button>
+                <Switch
+                  checked={item.is_active}
+                  onCheckedChange={(checked) =>
+                    void updateCatalogItem(panel.kind, {
+                      id: item.id,
+                      is_active: checked,
+                    })
+                  }
+                  aria-label={`Activar ${item.name}`}
+                />
+                <button
+                  type="button"
+                  aria-label={`Eliminar ${item.name}`}
+                  className="text-slate-400 transition hover:text-red-600"
+                  onClick={() => {
+                    if (window.confirm(`¿Eliminar "${item.name}" del catálogo?`)) {
+                      void deleteCatalogItem(panel.kind, item.id);
+                    }
+                  }}
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex gap-2">
+            <Input
+              placeholder="Nuevo elemento…"
+              value={newNames[panel.kind] ?? ""}
+              onChange={(e) =>
+                setNewNames((s) => ({ ...s, [panel.kind]: e.target.value }))
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void handleAdd(panel.kind);
+              }}
+            />
+            <Button type="button" size="sm" onClick={() => void handleAdd(panel.kind)}>
+              <Plus className="size-4" aria-hidden />
+              Agregar
+            </Button>
+          </div>
+        </section>
+      ))}
+    </main>
+  );
+}
