@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Background,
   Controls,
@@ -8,6 +8,8 @@ import {
   MiniMap,
   Position,
   ReactFlow,
+  useEdgesState,
+  useNodesState,
   type Edge,
   type Node,
   type NodeProps,
@@ -99,7 +101,7 @@ export default function EcosystemNodeGraph({
 }) {
   const filtered = useMemo(() => filterRecords(records, filters), [records, filters]);
 
-  const { nodes, edges, nameById } = useMemo(() => {
+  const graphData = useMemo(() => {
     const graph = buildGraph(filtered, mode);
     const dependencyNames = new Map<string, string>();
     for (const dep of dependencies) dependencyNames.set(`d:${dep.id}`, dep.name);
@@ -113,12 +115,28 @@ export default function EcosystemNodeGraph({
     };
   }, [filtered, mode, dependencies]);
 
+  const [nodes, setNodes, onNodesChange] = useNodesState(graphData.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(graphData.edges);
+
+  useEffect(() => {
+    setNodes(graphData.nodes);
+  }, [graphData.nodes, setNodes]);
+
+  useEffect(() => {
+    setEdges(graphData.edges);
+  }, [graphData.edges, setEdges]);
+
+  const nameById = graphData.nameById;
+
   return (
     <div className="h-[520px] rounded-lg border bg-white">
       <ReactFlow
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodesDraggable
         fitView
         minZoom={0.15}
         onNodeClick={(_, node) => {
