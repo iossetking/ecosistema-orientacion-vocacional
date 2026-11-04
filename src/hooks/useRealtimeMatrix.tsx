@@ -107,7 +107,7 @@ export function MatrixProvider({
         "postgres_changes",
         { event: "*", schema: "public", table: "matrix_records" },
         (payload) => {
-          const row = (payload.new ?? payload.old) as RecordRow & { id: string };
+          const row = (payload.eventType === "DELETE" ? payload.old : payload.new) as RecordRow & { id: string };
           setSnapshot((s) => ({
             ...s,
             records: applyRecordEvent(s.records, payload.eventType as "INSERT" | "UPDATE" | "DELETE", row),
@@ -119,7 +119,7 @@ export function MatrixProvider({
         "postgres_changes",
         { event: "*", schema: "public", table: "record_dependencies" },
         (payload) => {
-          const row = (payload.new ?? payload.old) as {
+          const row = (payload.eventType === "DELETE" ? payload.old : payload.new) as {
             record_id: string;
             dependency_id: string;
           };
@@ -140,7 +140,7 @@ export function MatrixProvider({
           "postgres_changes",
           { event: "*", schema: "public", table },
           (payload) => {
-            const row = (payload.new ?? payload.old) as never;
+            const row = (payload.eventType === "DELETE" ? payload.old : payload.new) as never;
             setSnapshot((s) => ({
               ...s,
               [key]: applyCatalogEvent(s[key] as { id: string }[], payload.eventType as "INSERT" | "UPDATE" | "DELETE", row),
