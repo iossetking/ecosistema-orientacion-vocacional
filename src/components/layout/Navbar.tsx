@@ -9,6 +9,7 @@ const TABS = [
   { href: "/", label: "Matriz" },
   { href: "/analisis", label: "Análisis" },
   { href: "/catalogos", label: "Catálogos" },
+  { href: "/exportar", label: "Exportar" },
 ];
 
 export default function Navbar({

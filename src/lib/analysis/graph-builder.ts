@@ -1,5 +1,5 @@
 import { ACTIONS_DIMENSION_ID, getDimension, getStage, getStatus } from "@/constants/matrix-config";
-import type { MatrixRecord, RecordStatus } from "@/types/matrix";
+import type { CatalogActionType, MatrixRecord, RecordStatus } from "@/types/matrix";
 
 export type GraphMode = "stages" | "dependencies" | "full";
 
@@ -37,6 +37,12 @@ export type GraphNode = {
   stageId?: number;
   dimensionId?: number;
   dimensionName?: string;
+  actionTypeId?: string | null;
+  actionTypeName?: string;
+  actionType?: string;
+  actionTypeLabel?: string;
+  typeName?: string;
+  type?: string;
   color?: string;
 }
 
@@ -149,7 +155,38 @@ export function filterRecords(records: MatrixRecord[], filters: GraphFilters = {
 export function buildGraph(
   records: MatrixRecord[],
   mode: GraphMode,
+  actionTypesOrOptions?:
+    | CatalogActionType[]
+    | { actionTypes?: CatalogActionType[]; actionTypeNames?: Map<string, string> | Record<string, string> }
+    | Map<string, string>
+    | Record<string, string>,
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
+  const actionTypeNamesMap = new Map<string, string>();
+  if (Array.isArray(actionTypesOrOptions)) {
+    for (const t of actionTypesOrOptions) actionTypeNamesMap.set(t.id, t.name);
+  } else if (actionTypesOrOptions instanceof Map) {
+    for (const [k, v] of actionTypesOrOptions.entries()) actionTypeNamesMap.set(String(k), String(v));
+  } else if (actionTypesOrOptions && typeof actionTypesOrOptions === "object") {
+    const opts = actionTypesOrOptions as { actionTypeNames?: Map<string, string> | Record<string, string>; actionTypes?: CatalogActionType[] };
+    if (opts.actionTypeNames instanceof Map) {
+      for (const [k, v] of opts.actionTypeNames.entries()) actionTypeNamesMap.set(String(k), String(v));
+    } else if (opts.actionTypeNames && typeof opts.actionTypeNames === "object") {
+      for (const [k, v] of Object.entries(opts.actionTypeNames)) actionTypeNamesMap.set(String(k), String(v));
+    }
+    const at = opts.actionTypes;
+    if (Array.isArray(at)) for (const t of at) actionTypeNamesMap.set(t.id, t.name);
+    // Treat a plain record { id: name } as a map if no recognized keys
+    if (!opts.actionTypes && !opts.actionTypeNames) {
+      const entries = Object.entries(actionTypesOrOptions as Record<string, unknown>);
+      if (entries.length > 0 && entries.every(([, v]) => typeof v === "string")) {
+        for (const [k, v] of entries) actionTypeNamesMap.set(k, v as string);
+      }
+    }
+  }
+  const resolveActionTypeName = (id: string | null) => {
+    if (!id) return undefined;
+    return actionTypeNamesMap.get(id);
+  };
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];
   const stageHubIds = new Set<number>();
@@ -166,6 +203,12 @@ export function buildGraph(
       stageId: record.primary_stage_id,
       dimensionId: record.dimension_id,
       dimensionName: getDimension(record.dimension_id)?.name,
+      actionTypeId: record.action_type_id,
+      actionTypeName: resolveActionTypeName(record.action_type_id),
+      actionType: resolveActionTypeName(record.action_type_id),
+      actionTypeLabel: resolveActionTypeName(record.action_type_id),
+      typeName: resolveActionTypeName(record.action_type_id),
+      type: resolveActionTypeName(record.action_type_id),
     });
 
     if (mode === "stages" || mode === "full") {

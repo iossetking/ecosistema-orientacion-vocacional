@@ -48,6 +48,7 @@ export default function AnalysisWorkspace() {
         <EcosystemNodeGraph
           records={snapshot.records}
           dependencies={snapshot.dependencies}
+          actionTypes={snapshot.actionTypes}
           mode={mode}
           filters={filters}
           onSelectRecord={setDetailRecord}
