@@ -16,7 +16,7 @@ import {
 } from "@xyflow/react";
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from "d3-force";
 import "@xyflow/react/dist/style.css";
-import type { CatalogDependency, MatrixRecord } from "@/types/matrix";
+import type { CatalogActionType, CatalogDependency, MatrixRecord } from "@/types/matrix";
 import { getDimension } from "@/constants/matrix-config";
 import {
   buildGraph,
@@ -54,7 +54,7 @@ function layout(nodes: GraphNode[], edges: GraphEdge[]): Node[] {
   }));
 }
 
-function RecordNodeView({ data }: NodeProps) {
+export function RecordNodeView({ data }: NodeProps) {
   const node = data as unknown as GraphNode;
   return (
     <div
@@ -66,12 +66,17 @@ function RecordNodeView({ data }: NodeProps) {
       <p className="line-clamp-2 text-[10px] font-medium leading-tight text-slate-700">
         {node.label}
       </p>
-      <p className="mt-1 text-[9px] text-slate-400">{node.dimensionName ?? getDimension(node.dimensionId ?? 0)?.name ?? `Dimensión ${node.dimensionId}`}</p>
+      {(node.dimensionName ?? getDimension(node.dimensionId ?? 0)?.name) !== "Acciones y recursos actuales" ? (
+        <p className="mt-1 text-[9px] text-slate-400">{node.dimensionName ?? getDimension(node.dimensionId ?? 0)?.name ?? `Dimensión ${node.dimensionId}`}</p>
+      ) : null}
+      {node.actionTypeName || node.actionType || node.typeName || node.type ? (
+        <p className="text-[9px] text-slate-400">{node.actionTypeName ?? node.actionType ?? node.typeName ?? node.type}</p>
+      ) : null}
     </div>
   );
 }
 
-function HubNodeView({ data }: NodeProps) {
+export function HubNodeView({ data }: NodeProps) {
   const node = data as unknown as GraphNode;
   return (
     <div
@@ -90,12 +95,16 @@ const nodeTypes = { recordNode: RecordNodeView, hubNode: HubNodeView };
 export default function EcosystemNodeGraph({
   records,
   dependencies,
+  actionTypes,
+  actionTypeNames,
   mode,
   filters,
   onSelectRecord,
 }: {
   records: MatrixRecord[];
   dependencies: CatalogDependency[];
+  actionTypes?: CatalogActionType[];
+  actionTypeNames?: CatalogActionType[] | Map<string, string> | Record<string, string>;
   mode: GraphMode;
   filters: GraphFilters;
   onSelectRecord: (record: MatrixRecord) => void;
@@ -103,7 +112,7 @@ export default function EcosystemNodeGraph({
   const filtered = useMemo(() => filterRecords(records, filters), [records, filters]);
 
   const graphData = useMemo(() => {
-    const graph = buildGraph(filtered, mode);
+    const graph = buildGraph(filtered, mode, actionTypes ?? actionTypeNames);
     const dependencyNames = new Map<string, string>();
     for (const dep of dependencies) dependencyNames.set(`d:${dep.id}`, dep.name);
     const resolved = graph.nodes.map((n) =>
@@ -114,7 +123,7 @@ export default function EcosystemNodeGraph({
       edges: graph.edges.map((e) => ({ ...e, animated: true })) as Edge[],
       nameById: new Map(resolved.map((n) => [n.id, n])),
     };
-  }, [filtered, mode, dependencies]);
+  }, [filtered, mode, dependencies, actionTypes, actionTypeNames]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(graphData.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(graphData.edges);
