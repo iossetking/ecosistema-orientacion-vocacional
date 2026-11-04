@@ -53,7 +53,7 @@ function RecordNodeView({ data }: NodeProps) {
   const node = data as unknown as GraphNode;
   return (
     <div
-      className="w-40 rounded-md border-2 bg-white px-2 py-1.5 shadow-sm"
+      className="w-40 rounded-md border-2 bg-white px-2 py-1.5"
       style={{ borderColor: node.statusColor ?? "#9ca3af" }}
     >
       <p className="line-clamp-2 text-[10px] font-medium leading-tight text-slate-700">
@@ -68,7 +68,7 @@ function HubNodeView({ data }: NodeProps) {
   const node = data as unknown as GraphNode;
   return (
     <div
-      className="rounded-full border px-3 py-1.5 text-[10px] font-semibold text-slate-800 shadow-sm"
+      className="rounded-full border px-3 py-1.5 text-[10px] font-semibold text-slate-800"
       style={{ backgroundColor: node.color ?? "#e2e8f0", borderColor: "#94a3b8" }}
     >
       {node.label}

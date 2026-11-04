@@ -27,7 +27,10 @@ export default function ActionsCell({
   }
 
   return (
-    <div className="flex min-h-24 flex-col gap-1.5 rounded-lg border border-slate-200 bg-white/60 p-2">
+    <div className="flex min-h-24 flex-col gap-1.5 rounded-lg border border-slate-200 bg-white p-2">
+      {groups.size === 0 ? (
+        <p className="py-2 text-center text-xs text-slate-400">Sin registros</p>
+      ) : null}
       {[...groups.entries()].map(([typeId, items]) => {
         const type = actionTypes.find((t) => t.id === typeId);
         const groupName = type?.name ?? "Sin tipo";
@@ -63,7 +66,7 @@ export default function ActionsCell({
       <button
         type="button"
         onClick={() => onAdd(3, stageId)}
-        className="mt-auto flex items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 px-2 py-1.5 text-xs text-slate-500 transition hover:border-slate-500 hover:text-slate-700"
+        className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-2 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-500 hover:bg-white hover:text-slate-700"
       >
         <Plus className="size-3.5" aria-hidden />
         Agregar registro

@@ -38,26 +38,26 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs text-slate-500">Total de registros</p>
           <p className="text-2xl font-semibold">{k.total}</p>
         </div>
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs text-slate-500">Existe y funciona</p>
           <p className="text-2xl font-semibold text-emerald-600">{k.workingPct}%</p>
         </div>
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs text-slate-500">Requiere fortalecimiento</p>
           <p className="text-2xl font-semibold text-blue-600">{k.strengtheningPct}%</p>
         </div>
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs text-slate-500">Vacíos o barreras</p>
           <p className="text-2xl font-semibold text-red-600">{k.gaps}</p>
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <h3 className="mb-2 text-sm font-semibold">Distribución por estado</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -80,7 +80,7 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <h3 className="mb-2 text-sm font-semibold">Registros por etapa y estado</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -98,7 +98,7 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-4 lg:col-span-2">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 lg:col-span-2">
           <h3 className="mb-2 text-sm font-semibold">Mapa de calor Etapa × Dimensión</h3>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-xs">
@@ -140,7 +140,7 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <h3 className="mb-2 text-sm font-semibold">Participación por dependencia</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -155,7 +155,7 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <h3 className="mb-2 text-sm font-semibold">
             Acciones por tipo y modalidad (Dimensión 3)
           </h3>

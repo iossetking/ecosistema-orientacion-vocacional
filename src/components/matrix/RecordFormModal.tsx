@@ -3,12 +3,11 @@
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -32,6 +31,7 @@ import {
   type RecordFormValues,
 } from "@/types/matrix";
 import { createRecord, updateRecord } from "@/app/actions/records";
+import { Save } from "lucide-react";
 
 type FormValues = RecordFormValues &
   Partial<
@@ -63,6 +63,7 @@ export default function RecordFormModal({
   dependencies,
 }: Props) {
   const isAction = dimensionId === ACTIONS_DIMENSION_ID;
+  const dimension = DIMENSIONS.find((d) => d.id === dimensionId);
   const schema = useMemo(() => getRecordFormSchema(dimensionId), [dimensionId]);
 
   const {
@@ -117,29 +118,32 @@ export default function RecordFormModal({
     <Dialog open={open} onOpenChange={(o) => (!o ? onClose() : null)}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {record ? "Editar registro" : "Nuevo registro"} —{" "}
-            {DIMENSIONS.find((d) => d.id === dimensionId)?.name}
+          <DialogTitle className="text-lg">
+            {record ? "Editar registro" : "Nuevo registro"}
           </DialogTitle>
+          <DialogDescription>
+            Dimensión: {dimension?.name ?? "—"}
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <input type="hidden" {...register("dimensionId")} />
 
           {isAction ? (
-            <>
+            <section className="space-y-4 rounded-lg border border-slate-200 p-4">
+              <h3 className="text-sm font-semibold text-slate-900">Datos de la acción o recurso</h3>
               <div className="space-y-2">
                 <Label htmlFor="actionName">Nombre de la acción o recurso</Label>
-                <Input id="actionName" {...register("actionName")} />
+                <Input id="actionName" className="bg-white" {...register("actionName")} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Tipo de acción o recurso</Label>
                   <Select
                     value={watch("actionTypeId") ?? ""}
                     onValueChange={(v) => setValue("actionTypeId", v)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Selecciona un tipo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -159,7 +163,7 @@ export default function RecordFormModal({
                     value={watch("modalityId") ?? ""}
                     onValueChange={(v) => setValue("modalityId", v)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Selecciona una modalidad" />
                     </SelectTrigger>
                     <SelectContent>
@@ -175,103 +179,117 @@ export default function RecordFormModal({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="organizer">Quién lo organiza</Label>
-                  <Input id="organizer" {...register("organizer")} />
+                  <Input id="organizer" className="bg-white" {...register("organizer")} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="executor">Quién lo aplica o ejecuta</Label>
-                  <Input id="executor" {...register("executor")} />
+                  <Input id="executor" className="bg-white" {...register("executor")} />
                 </div>
               </div>
-            </>
+            </section>
           ) : null}
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
-            <Textarea id="description" rows={3} {...register("description")} />
-            {errors.description ? (
-              <p className="text-xs text-red-600">{errors.description.message}</p>
-            ) : null}
-          </div>
+          <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="text-sm font-semibold text-slate-900">Descripción y clasificación</h3>
+            <div className="space-y-2">
+              <Label htmlFor="description">Descripción</Label>
+              <Textarea id="description" rows={3} {...register("description")} />
+              {errors.description ? (
+                <p className="text-xs text-red-600">{errors.description.message}</p>
+              ) : null}
+            </div>
 
-          <div className="space-y-2">
-            <Label>Etapa principal</Label>
-            <Select
-              value={String(watch("primaryStageId"))}
-              onValueChange={(v) => setValue("primaryStageId", Number(v))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {STAGES.map((s) => (
-                  <SelectItem key={s.id} value={String(s.id)}>
-                    {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Etapa principal</Label>
+                <Select
+                  value={String(watch("primaryStageId"))}
+                  onValueChange={(v) => setValue("primaryStageId", Number(v))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STAGES.map((s) => (
+                      <SelectItem key={s.id} value={String(s.id)}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Estado del registro</Label>
+                <Select
+                  value={status}
+                  onValueChange={(v) => setValue("status", v as FormValues["status"])}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STATUSES.map((s) => (
+                      <SelectItem key={s.key} value={s.key}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </section>
 
-          <div className="space-y-2">
+          <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
             <Label>Etapas relacionadas</Label>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               {STAGES.map((s) => (
-                <label key={s.id} className="flex items-center gap-1.5 text-xs text-slate-600">
-                  <Checkbox
-                    checked={relatedStageIds.includes(s.id)}
-                    onCheckedChange={() =>
-                      setValue("relatedStageIds", toggleValue(relatedStageIds, s.id))
-                    }
-                  />
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setValue("relatedStageIds", toggleValue(relatedStageIds, s.id))}
+                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                    relatedStageIds.includes(s.id)
+                      ? "border-slate-900 bg-slate-900 text-white"
+                      : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-400"
+                  }`}
+                >
                   Etapa {s.id}
-                </label>
+                </button>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="space-y-2">
-            <Label>Estado del registro</Label>
-            <Select
-              value={status}
-              onValueChange={(v) => setValue("status", v as FormValues["status"])}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUSES.map((s) => (
-                  <SelectItem key={s.key} value={s.key}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
+          <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
             <Label>Dependencias participantes</Label>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               {dependencies
                 .filter((d) => d.is_active)
                 .map((d) => (
-                  <label key={d.id} className="flex items-center gap-1.5 text-xs text-slate-600">
-                    <Checkbox
-                      checked={dependencyIds.includes(d.id)}
-                      onCheckedChange={() =>
-                        setValue("dependencyIds", toggleDependency(dependencyIds, d.id))
-                      }
-                    />
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => setValue("dependencyIds", toggleDependency(dependencyIds, d.id))}
+                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                      dependencyIds.includes(d.id)
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-400"
+                    }`}
+                  >
                     {d.name}
-                  </label>
+                  </button>
                 ))}
+              {dependencies.filter((d) => d.is_active).length === 0 ? (
+                <p className="text-xs text-slate-400">Sin dependencias disponibles</p>
+              ) : null}
             </div>
-          </div>
+          </section>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 border-t border-slate-200 pt-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="gap-2">
+              <Save className="size-4" aria-hidden />
               {isSubmitting ? "Guardando…" : "Guardar"}
             </Button>
           </div>

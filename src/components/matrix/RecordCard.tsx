@@ -14,7 +14,7 @@ export default function RecordCard({
     <button
       type="button"
       onClick={() => onOpen(record)}
-      className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-left shadow-sm transition hover:border-slate-400"
+      className="w-full min-h-[2.5rem] rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-left transition hover:border-slate-300"
     >
       <div className="flex items-start gap-2">
         <span

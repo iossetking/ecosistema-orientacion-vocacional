@@ -28,9 +28,9 @@ export default function Navbar({
   }
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
       <div className="flex items-center gap-4">
-        <h1 className="text-sm font-semibold text-slate-900">Matriz etapa × dimensión</h1>
+        <h1 className="text-base font-semibold tracking-tight text-slate-900">Matriz etapa × dimensión</h1>
         <nav className="flex gap-1">
           {TABS.map((tab) => {
             const active = pathname === tab.href;

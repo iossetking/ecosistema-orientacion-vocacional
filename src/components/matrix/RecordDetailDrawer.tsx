@@ -33,13 +33,13 @@ export default function RecordDetailDrawer({
   return (
     <Sheet open onOpenChange={(o) => (!o ? onClose() : null)}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-md">
-        <SheetHeader>
+        <SheetHeader className="pr-10">
           <SheetTitle className="text-left">
             {record.action_name ?? dimension?.name}
           </SheetTitle>
         </SheetHeader>
 
-        <div className="space-y-4 text-sm">
+        <div className="space-y-4 p-4 text-sm">
           <div className="flex items-center gap-2">
             <span className="size-3 rounded-full" style={{ backgroundColor: status?.color }} />
             <span className="font-medium">{status?.label}</span>
@@ -55,7 +55,10 @@ export default function RecordDetailDrawer({
             <p>{stage?.name}</p>
             {record.related_stage_ids.length > 0 ? (
               <p className="text-xs text-slate-500">
-                Etapas relacionadas: {record.related_stage_ids.join(", ")}
+                Etapas relacionadas:{" "}
+                {record.related_stage_ids
+                  .map((id) => getStage(id)?.name ?? `Etapa ${id}`)
+                  .join(", ")}
               </p>
             ) : null}
           </div>
@@ -97,7 +100,7 @@ export default function RecordDetailDrawer({
             )}
           </div>
 
-          <div className="space-y-1 rounded-md bg-slate-50 p-3 text-xs text-slate-500">
+          <div className="space-y-1 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-500">
             <p>
               Creado por: {record.created_by_name} ({record.created_by_dependency}) el{" "}
               {formatDate(record.created_at)}

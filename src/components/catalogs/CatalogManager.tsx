@@ -40,14 +40,14 @@ export default function CatalogManager() {
   return (
     <main className="grid gap-4 p-4 lg:grid-cols-3">
       {panels.map((panel) => (
-        <section key={panel.kind} className="rounded-lg border bg-white p-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-900">{panel.title}</h2>
+        <section key={panel.kind} className="rounded-lg border border-slate-200 bg-white p-5">
+          <h2 className="mb-4 text-base font-semibold text-slate-900">{panel.title}</h2>
 
           <ul className="mb-3 space-y-1.5">
             {panel.items.map((item, index) => (
               <li
                 key={item.id}
-                className="flex items-center gap-2 rounded-md border border-slate-200 px-2 py-1.5 text-sm"
+                className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm transition hover:bg-white"
               >
                 <span className={`flex-1 ${item.is_active ? "" : "text-slate-400 line-through"}`}>
                   {item.name}

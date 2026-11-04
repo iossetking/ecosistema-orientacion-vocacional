@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -49,14 +50,18 @@ export default function FilterBar({
   onChange: (filters: MatrixFilters) => void;
 }) {
   return (
-    <div className="grid flex-1 grid-cols-2 gap-2 md:grid-cols-4">
-      <Input
-        placeholder="Buscar registro…"
-        value={filters.search}
-        onChange={(e) => onChange({ ...filters, search: e.target.value })}
-      />
+    <div className="flex flex-1 flex-wrap items-center gap-1.5">
+      <div className="relative min-w-[200px] flex-1">
+        <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden />
+        <Input
+          className="pl-8"
+          placeholder="Buscar registro…"
+          value={filters.search}
+          onChange={(e) => onChange({ ...filters, search: e.target.value })}
+        />
+      </div>
       <Select value={filters.status} onValueChange={(v) => onChange({ ...filters, status: v })}>
-        <SelectTrigger aria-label="Estado">
+        <SelectTrigger className="w-[170px]" aria-label="Estado">
           <SelectValue placeholder="Estado" />
         </SelectTrigger>
         <SelectContent>
@@ -69,7 +74,7 @@ export default function FilterBar({
         </SelectContent>
       </Select>
       <Select value={filters.stage} onValueChange={(v) => onChange({ ...filters, stage: v })}>
-        <SelectTrigger aria-label="Etapa">
+        <SelectTrigger className="w-[190px]" aria-label="Etapa">
           <SelectValue placeholder="Etapa" />
         </SelectTrigger>
         <SelectContent>
@@ -85,7 +90,7 @@ export default function FilterBar({
         value={filters.dimension}
         onValueChange={(v) => onChange({ ...filters, dimension: v })}
       >
-        <SelectTrigger aria-label="Dimensión">
+        <SelectTrigger className="w-[210px]" aria-label="Dimensión">
           <SelectValue placeholder="Dimensión" />
         </SelectTrigger>
         <SelectContent>
