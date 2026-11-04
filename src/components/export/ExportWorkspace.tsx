@@ -58,7 +58,21 @@ export default function ExportWorkspace() {
       <div ref={allRef} className="space-y-6">
         <section ref={matrixRef} className="space-y-2">
           <h3 className="text-sm font-semibold text-slate-900">Vista matriz</h3>
-          <MatrixBoard snapshot={snapshot} />
+          <MatrixBoard
+            snapshot={snapshot}
+            readOnly
+            exportMode
+            mode="export"
+            hideFilters
+            hideTopFilters
+            hideFilterBar
+            hideButtons
+            hideAddButtons
+            hideAdd
+            noFilters
+            noActions
+            noAdd
+          />
         </section>
 
         <section ref={analysisRef} className="space-y-2">

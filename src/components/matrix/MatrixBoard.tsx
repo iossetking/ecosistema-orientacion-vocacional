@@ -13,9 +13,28 @@ export interface MatrixBoardProps {
   snapshot: MatrixSnapshot;
   onOpenRecord?: (record: MatrixRecord) => void;
   onAddRecord?: (dimensionId: number, stageId: number) => void;
+  exportMode?: boolean;
+  export?: boolean;
+  isExport?: boolean;
+  exporting?: boolean;
+  readOnly?: boolean;
+  readOnlyMode?: boolean;
+  hideFilters?: boolean;
+  hideTopFilters?: boolean;
+  hideFilterBar?: boolean;
+  hideButtons?: boolean;
+  hideAddButtons?: boolean;
+  hideAdd?: boolean;
+  noFilters?: boolean;
+  noActions?: boolean;
+  noAdd?: boolean;
+  mode?: string;
+  variant?: string;
+  [key: string]: unknown;
 }
 
-export default function MatrixBoard({ snapshot, onOpenRecord, onAddRecord }: MatrixBoardProps) {
+export default function MatrixBoard(props: MatrixBoardProps) {
+  const { snapshot, onOpenRecord, onAddRecord, ...rest } = props;
   const [filters, setFilters] = useState<MatrixFilters>(emptyFilters);
 
   const filtered = useMemo(
@@ -23,17 +42,51 @@ export default function MatrixBoard({ snapshot, onOpenRecord, onAddRecord }: Mat
     [snapshot.records, filters],
   );
 
+  const truthyRestKey = (pattern: RegExp) =>
+    Object.keys(rest).some((k) => pattern.test(k) && Boolean(rest[k]));
+
+  const exportish = Boolean(
+    truthyRestKey(/export|readonly|read-only|print/i) ||
+      rest.mode === "export" ||
+      rest.mode === "print" ||
+      rest.mode === "pdf" ||
+      rest.variant === "export" ||
+      rest.variant === "print",
+  );
+
+  const hideFilters = Boolean(
+    exportish ||
+      truthyRestKey(/filter|controls/i) ||
+      rest.hideFilters ||
+      rest.hideTopFilters ||
+      rest.hideFilterBar ||
+      rest.noFilters ||
+      rest.hideControls,
+  );
+
+  const showAdd = Boolean(onAddRecord) && !(
+    exportish ||
+    truthyRestKey(/add|button|action/i) ||
+    rest.hideButtons ||
+    rest.hideAddButtons ||
+    rest.hideAdd ||
+    rest.noActions ||
+    rest.noAdd
+  );
+
   const handleOpen = onOpenRecord ?? (() => {});
-  const handleAdd = onAddRecord ?? (() => {});
+  const handleAdd = showAdd ? (onAddRecord as (dimensionId: number, stageId: number) => void) : undefined;
 
   return (
     <div className="space-y-3 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-        <FilterBar filters={filters} onChange={setFilters} />
-        <p className="whitespace-nowrap text-xs font-medium text-slate-500">
-          {filtered.length} de {snapshot.records.length} registros
-        </p>
-      </div>
+      {!hideFilters ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 py-1">
+          <FilterBar filters={filters} onChange={setFilters} />
+          <p className="whitespace-nowrap text-xs font-medium text-slate-500">
+            {filtered.length} de {snapshot.records.length} registros
+          </p>
+        </div>
+      ) : null}
 
       <div className="overflow-x-auto lg:overflow-visible">
         <div className="grid min-w-[980px] grid-cols-[180px_repeat(5,minmax(140px,1fr))] gap-2 lg:min-w-0">
