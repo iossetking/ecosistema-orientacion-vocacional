@@ -88,6 +88,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE catalog_action_types;
 ALTER PUBLICATION supabase_realtime ADD TABLE catalog_modalities;
 ALTER PUBLICATION supabase_realtime ADD TABLE catalog_dependencies;
 
+-- Replica identity: necesario para que los eventos DELETE envíen la PK a clientes
+-- (con RLS activo, Supabase Realtime solo envía la PK en deletes).
+ALTER TABLE matrix_records REPLICA IDENTITY FULL;
+ALTER TABLE record_dependencies REPLICA IDENTITY FULL;
+ALTER TABLE catalog_action_types REPLICA IDENTITY FULL;
+ALTER TABLE catalog_modalities REPLICA IDENTITY FULL;
+ALTER TABLE catalog_dependencies REPLICA IDENTITY FULL;
+
 -- Permisos: las tablas creadas por SQL no heredan acceso a service_role por defecto
 GRANT USAGE ON SCHEMA public TO service_role, authenticated, anon;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
