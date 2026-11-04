@@ -13,9 +13,10 @@ export default function AnalysisWorkspace() {
   const { snapshot } = useMatrix();
   const [mode, setMode] = useState<GraphMode>("stages");
   const [search, setSearch] = useState("");
+  const [recordScope, setRecordScope] = useState<string>("normal");
   const [detailRecord, setDetailRecord] = useState<MatrixRecord | null>(null);
 
-  const filters: GraphFilters = { search };
+  const filters: GraphFilters = { search, recordScope };
 
   return (
     <main className="space-y-4 p-4">
@@ -23,7 +24,16 @@ export default function AnalysisWorkspace() {
         <h2 className="text-sm font-semibold text-slate-900">
           Gráfica de nodos del ecosistema
         </h2>
-        <GraphControls mode={mode} onModeChange={setMode} search={search} onSearchChange={setSearch} />
+        <GraphControls
+          mode={mode}
+          onModeChange={setMode}
+          search={search}
+          onSearchChange={setSearch}
+          recordScope={recordScope}
+          onRecordScopeChange={(v: unknown) => setRecordScope(String(v))}
+          scope={recordScope}
+          onScopeChange={(v: unknown) => setRecordScope(String(v))}
+        />
         <EcosystemNodeGraph
           records={snapshot.records}
           dependencies={snapshot.dependencies}
