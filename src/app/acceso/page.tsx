@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DEPENDENCY_SEED_NAMES } from "@/constants/matrix-config";
 
 export default function AccesoPage() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [dependency, setDependency] = useState("");
   const [pin, setPin] = useState("");
@@ -31,8 +29,8 @@ export default function AccesoPage() {
         return;
       }
       const next = new URLSearchParams(window.location.search).get("next");
-      router.push(next && next.startsWith("/") ? next : "/");
-      router.refresh();
+      const target = next && next.startsWith("/") ? next : "/";
+      window.location.assign(target);
     } finally {
       setLoading(false);
     }
