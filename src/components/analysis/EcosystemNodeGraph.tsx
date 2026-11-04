@@ -4,7 +4,9 @@ import { useMemo } from "react";
 import {
   Background,
   Controls,
+  Handle,
   MiniMap,
+  Position,
   ReactFlow,
   type Edge,
   type Node,
@@ -53,9 +55,11 @@ function RecordNodeView({ data }: NodeProps) {
   const node = data as unknown as GraphNode;
   return (
     <div
-      className="w-40 rounded-md border-2 bg-white px-2 py-1.5"
+      className="relative w-40 rounded-md border-2 bg-white px-2 py-1.5"
       style={{ borderColor: node.statusColor ?? "#9ca3af" }}
     >
+      <Handle type="target" position={Position.Top} className="!bg-slate-400" />
+      <Handle type="source" position={Position.Bottom} className="!bg-slate-400" />
       <p className="line-clamp-2 text-[10px] font-medium leading-tight text-slate-700">
         {node.label}
       </p>
@@ -68,9 +72,11 @@ function HubNodeView({ data }: NodeProps) {
   const node = data as unknown as GraphNode;
   return (
     <div
-      className="rounded-full border px-3 py-1.5 text-[10px] font-semibold text-slate-800"
+      className="relative rounded-full border px-3 py-1.5 text-[10px] font-semibold text-slate-800"
       style={{ backgroundColor: node.color ?? "#e2e8f0", borderColor: "#94a3b8" }}
     >
+      <Handle type="target" position={Position.Top} className="!bg-slate-400" />
+      <Handle type="source" position={Position.Bottom} className="!bg-slate-400" />
       {node.label}
     </div>
   );
