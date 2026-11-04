@@ -52,42 +52,46 @@ export default function Navbar({
         ) : null}
       </div>
       <div className="flex items-center gap-3 text-xs">
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium ${
-            connection === "live"
-              ? "bg-emerald-50 text-emerald-700"
-              : connection === "connecting"
-                ? "bg-amber-50 text-amber-700"
-                : "bg-red-50 text-red-700"
-          }`}
-        >
+        {pathname !== "/acceso" ? (
           <span
-            className={`size-2 rounded-full ${
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium ${
               connection === "live"
-                ? "bg-emerald-500"
+                ? "bg-emerald-50 text-emerald-700"
                 : connection === "connecting"
-                  ? "bg-amber-500"
-                  : "bg-red-500"
+                  ? "bg-amber-50 text-amber-700"
+                  : "bg-red-50 text-red-700"
             }`}
-          />
-          {connection === "live"
-            ? "Sincronización en vivo"
-            : connection === "connecting"
-              ? "Conectando…"
-              : "Sin conexión"}
-        </span>
+          >
+            <span
+              className={`size-2 rounded-full ${
+                connection === "live"
+                  ? "bg-emerald-500"
+                  : connection === "connecting"
+                    ? "bg-amber-500"
+                    : "bg-red-500"
+              }`}
+            />
+            {connection === "live"
+              ? "Sincronización en vivo"
+              : connection === "connecting"
+                ? "Conectando…"
+                : "Sin conexión"}
+          </span>
+        ) : null}
         {user ? (
           <span className="text-slate-600">
             {user.name} · {user.dependency}
           </span>
         ) : null}
-        <button
-          type="button"
-          onClick={logout}
-          className="rounded-md border border-slate-300 px-2.5 py-1 text-slate-600 transition hover:bg-slate-100"
-        >
-          Salir
-        </button>
+        {pathname !== "/acceso" ? (
+          <button
+            type="button"
+            onClick={logout}
+            className="rounded-md border border-slate-300 px-2.5 py-1 text-slate-600 transition hover:bg-slate-100"
+          >
+            Salir
+          </button>
+        ) : null}
       </div>
     </header>
   );
