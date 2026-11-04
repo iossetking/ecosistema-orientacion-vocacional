@@ -1,4 +1,4 @@
-import { ACTIONS_DIMENSION_ID, getStage, getStatus } from "@/constants/matrix-config";
+import { ACTIONS_DIMENSION_ID, getDimension, getStage, getStatus } from "@/constants/matrix-config";
 import type { MatrixRecord, RecordStatus } from "@/types/matrix";
 
 export type GraphMode = "stages" | "dependencies" | "full";
@@ -36,6 +36,7 @@ export type GraphNode = {
   statusColor?: string;
   stageId?: number;
   dimensionId?: number;
+  dimensionName?: string;
   color?: string;
 }
 
@@ -164,6 +165,7 @@ export function buildGraph(
       statusColor: getStatus(record.status)?.color,
       stageId: record.primary_stage_id,
       dimensionId: record.dimension_id,
+      dimensionName: getDimension(record.dimension_id)?.name,
     });
 
     if (mode === "stages" || mode === "full") {

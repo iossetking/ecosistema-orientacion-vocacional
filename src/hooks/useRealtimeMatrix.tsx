@@ -10,6 +10,7 @@ import {
 } from "react";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { CatalogKind } from "@/types/matrix";
 import {
   rowToRecord,
   type MatrixRecord,
@@ -62,6 +63,8 @@ export function applyCatalogEvent<T extends { id: string }>(
 interface MatrixContextValue {
   snapshot: MatrixSnapshot;
   connection: ConnectionStatus;
+  removeRecord: (id: string) => void;
+  removeCatalogItem: (kind: CatalogKind, id: string) => void;
 }
 
 const MatrixContext = createContext<MatrixContextValue | null>(null);
@@ -163,7 +166,19 @@ export function MatrixProvider({
     };
   }, []);
 
-  const value = useMemo(() => ({ snapshot, connection }), [snapshot, connection]);
+  const removeRecord = (id: string) => {
+    setSnapshot((s) => ({ ...s, records: s.records.filter((r) => r.id !== id) }));
+  };
+  const removeCatalogItem = (kind: CatalogKind, id: string) => {
+    const key =
+      kind === "action_types" ? "actionTypes" : kind === "modalities" ? "modalities" : "dependencies";
+    setSnapshot((s) => ({ ...s, [key]: (s[key] as { id: string }[]).filter((i) => i.id !== id) }));
+  };
+
+  const value = useMemo(
+    () => ({ snapshot, connection, removeRecord, removeCatalogItem }),
+    [snapshot, connection],
+  );
 
   return <MatrixContext.Provider value={value}>{children}</MatrixContext.Provider>;
 }

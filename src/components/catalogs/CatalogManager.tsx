@@ -13,6 +13,14 @@ import {
   updateCatalogItem,
 } from "@/app/actions/catalogs";
 import type { CatalogKind } from "@/types/matrix";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface PanelConfig {
   kind: CatalogKind;
@@ -21,8 +29,9 @@ interface PanelConfig {
 }
 
 export default function CatalogManager() {
-  const { snapshot } = useMatrix();
+  const { snapshot, removeCatalogItem } = useMatrix();
   const [newNames, setNewNames] = useState<Record<string, string>>({});
+  const [pendingDelete, setPendingDelete] = useState<{ kind: CatalogKind; id: string; name: string } | null>(null);
 
   const panels: PanelConfig[] = [
     { kind: "action_types", title: "Tipos de acción o recurso", items: snapshot.actionTypes },
@@ -88,11 +97,7 @@ export default function CatalogManager() {
                   type="button"
                   aria-label={`Eliminar ${item.name}`}
                   className="text-slate-400 transition hover:text-red-600"
-                  onClick={() => {
-                    if (window.confirm(`¿Eliminar "${item.name}" del catálogo?`)) {
-                      void deleteCatalogItem(panel.kind, item.id);
-                    }
-                  }}
+                  onClick={() => setPendingDelete({ kind: panel.kind, id: item.id, name: item.name })}
                 >
                   <Trash2 className="size-3.5" />
                 </button>
@@ -118,6 +123,36 @@ export default function CatalogManager() {
           </div>
         </section>
       ))}
+
+      <Dialog open={!!pendingDelete} onOpenChange={(o) => (!o ? setPendingDelete(null) : null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Eliminar este elemento?</DialogTitle>
+            <DialogDescription>
+              {pendingDelete
+                ? `Se eliminará "${pendingDelete.name}" del catálogo. Esta acción no se puede deshacer.`
+                : null}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingDelete(null)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (pendingDelete) {
+                  void deleteCatalogItem(pendingDelete.kind, pendingDelete.id);
+                  removeCatalogItem?.(pendingDelete.kind, pendingDelete.id);
+                }
+                setPendingDelete(null);
+              }}
+            >
+              Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
