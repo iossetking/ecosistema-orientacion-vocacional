@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useMatrix } from "@/hooks/useRealtimeMatrix";
 import MatrixBoard from "@/components/matrix/MatrixBoard";
 import ChartsDashboard from "@/components/analysis/ChartsDashboard";
+import EcosystemNodeGraph from "@/components/analysis/EcosystemNodeGraph";
 import { Button } from "@/components/ui/button";
 import { exportElementToPdf } from "@/lib/export/pdf";
 
@@ -63,6 +64,34 @@ export default function ExportWorkspace() {
         <section ref={analysisRef} className="space-y-2">
           <h3 className="text-sm font-semibold text-slate-900">Gráficas de análisis</h3>
           <ChartsDashboard snapshot={snapshot} />
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-slate-900">
+                Gráfica de nodos del ecosistema — Ecosistema completo — Registros normales
+              </h4>
+              <EcosystemNodeGraph
+                records={snapshot.records}
+                dependencies={snapshot.dependencies}
+                actionTypes={snapshot.actionTypes}
+                mode="full"
+                filters={{ recordScope: "normal" }}
+                onSelectRecord={() => {}}
+              />
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-slate-900">
+                Gráfica de nodos del ecosistema — Ecosistema completo — Acciones y recursos
+              </h4>
+              <EcosystemNodeGraph
+                records={snapshot.records}
+                dependencies={snapshot.dependencies}
+                actionTypes={snapshot.actionTypes}
+                mode="full"
+                filters={{ recordScope: "actions" }}
+                onSelectRecord={() => {}}
+              />
+            </div>
+          </div>
         </section>
       </div>
     </main>

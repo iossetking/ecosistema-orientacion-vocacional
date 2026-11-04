@@ -16,6 +16,7 @@ import {
 } from "@xyflow/react";
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from "d3-force";
 import "@xyflow/react/dist/style.css";
+import { BaseEdge, getBezierPath } from "@xyflow/react";
 import type { CatalogActionType, CatalogDependency, MatrixRecord } from "@/types/matrix";
 import { getDimension } from "@/constants/matrix-config";
 import {
@@ -92,6 +93,40 @@ export function HubNodeView({ data }: NodeProps) {
 
 const nodeTypes = { recordNode: RecordNodeView, hubNode: HubNodeView };
 
+function CustomEdge(props: Record<string, unknown>) {
+  const [path, labelX, labelY] = getBezierPath({
+    sourceX: props.sourceX as number,
+    sourceY: props.sourceY as number,
+    sourcePosition: props.sourcePosition as never,
+    targetX: props.targetX as number,
+    targetY: props.targetY as number,
+    targetPosition: props.targetPosition as never,
+    curvature: (props.pathOptions as { curvature?: number } | undefined)?.curvature,
+  });
+  return (
+    <BaseEdge
+      path={path}
+      labelX={labelX}
+      labelY={labelY}
+      label={props.label as never}
+      labelStyle={props.labelStyle as never}
+      labelShowBg={props.labelShowBg as boolean}
+      labelBgStyle={props.labelBgStyle as never}
+      labelBgPadding={props.labelBgPadding as never}
+      labelBgBorderRadius={props.labelBgBorderRadius as never}
+      markerEnd={props.markerEnd as string}
+      markerStart={props.markerStart as string}
+      interactionWidth={props.interactionWidth as number}
+      stroke="#b1b1b7"
+      strokeWidth={2}
+      strokeOpacity={1}
+      style={{ stroke: "#b1b1b7", strokeWidth: 2, strokeOpacity: 1, ...((props.style as Record<string, unknown>) || {}) }}
+    />
+  );
+}
+
+const edgeTypes = { default: CustomEdge };
+
 export default function EcosystemNodeGraph({
   records,
   dependencies,
@@ -144,10 +179,12 @@ export default function EcosystemNodeGraph({
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodesDraggable
         fitView
+        fitViewOptions={{ duration: 0 }}
         minZoom={0.15}
         onNodeClick={(_, node) => {
           const graphNode = nameById.get(node.id);

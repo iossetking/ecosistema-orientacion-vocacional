@@ -2,6 +2,7 @@ export async function exportElementToPdf(element: HTMLElement, filename: string)
   const { toPng } = await import("html-to-image");
   const { jsPDF } = await import("jspdf");
 
+  await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
   const dataUrl = await toPng(element, {
     cacheBust: true,
     pixelRatio: 2,
