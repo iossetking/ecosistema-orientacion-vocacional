@@ -3,19 +3,24 @@ import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import type { CatalogActionType, MatrixRecord } from "@/types/matrix";
 import RecordCard from "./RecordCard";
 
-export default function ActionsCell({
-  stageId,
-  records,
-  actionTypes,
-  onOpen,
-  onAdd,
-}: {
+export default function ActionsCell(props: {
   stageId: number;
   records: MatrixRecord[];
   actionTypes: CatalogActionType[];
   onOpen: (record: MatrixRecord) => void;
-  onAdd: (dimensionId: number, stageId: number) => void;
+  onAdd?: (dimensionId: number, stageId: number) => void;
+  hideAdd?: boolean;
+  exportMode?: boolean;
+  readOnly?: boolean;
+  [key: string]: unknown;
 }) {
+  const { stageId, records, actionTypes, onOpen, onAdd, hideAdd, exportMode, readOnly, ...rest } = props;
+  const hideButton = Boolean(
+    hideAdd ||
+      exportMode ||
+      readOnly ||
+      Object.keys(rest).some((k) => /export|readonly|read-only|print|hide|add|button/i.test(k) && Boolean(rest[k])),
+  );
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
   const groups = new Map<string, MatrixRecord[]>();
@@ -63,14 +68,16 @@ export default function ActionsCell({
           </div>
         );
       })}
-      <button
-        type="button"
-        onClick={() => onAdd(3, stageId)}
-        className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-2 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-500 hover:bg-white hover:text-slate-700"
-      >
-        <Plus className="size-3.5" aria-hidden />
-        Agregar registro
-      </button>
+      {onAdd && !hideButton ? (
+        <button
+          type="button"
+          onClick={() => onAdd(3, stageId)}
+          className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-2 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-500 hover:bg-white hover:text-slate-700"
+        >
+          <Plus className="size-3.5" aria-hidden />
+          Agregar registro
+        </button>
+      ) : null}
     </div>
   );
 }
