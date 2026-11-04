@@ -22,13 +22,13 @@ export type ConnectionStatus = "connecting" | "live" | "offline";
 export function applyRecordEvent(
   records: MatrixRecord[],
   event: "INSERT" | "UPDATE" | "DELETE",
-  row: RecordRow & { id: string },
+  row: Partial<RecordRow> & { id: string },
 ): MatrixRecord[] {
   if (event === "DELETE") {
     return records.filter((r) => r.id !== row.id);
   }
   const existing = records.find((r) => r.id === row.id);
-  const converted = rowToRecord(row, existing?.dependency_ids ?? []);
+  const converted = rowToRecord(row as RecordRow, existing?.dependency_ids ?? []);
   if (!existing) return [...records, converted];
   return records.map((r) => (r.id === converted.id ? converted : r));
 }
@@ -51,12 +51,12 @@ export function applyLinkEvent(
 export function applyCatalogEvent<T extends { id: string }>(
   list: T[],
   event: "INSERT" | "UPDATE" | "DELETE",
-  row: T,
+  row: Partial<T> & { id: string },
 ): T[] {
   if (event === "DELETE") return list.filter((i) => i.id !== row.id);
   const existing = list.find((i) => i.id === row.id);
-  if (!existing) return [...list, row];
-  return list.map((i) => (i.id === row.id ? row : i));
+  if (!existing) return [...list, row as T];
+  return list.map((i) => (i.id === row.id ? (row as T) : i));
 }
 
 interface MatrixContextValue {

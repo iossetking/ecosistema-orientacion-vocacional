@@ -89,7 +89,7 @@ export function countByDependency(
 export function actionsByCatalog(
   records: MatrixRecord[],
   field: "action_type_id" | "modality_id",
-  catalog: { id: string; name: string }[],
+  catalog: { id: string; name: string; sort_order?: number; is_active?: boolean }[],
 ): { name: string; count: number }[] {
   const actions = records.filter((r) => r.dimension_id === 3);
   return catalog.map((item) => ({

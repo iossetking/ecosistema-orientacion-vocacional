@@ -87,3 +87,12 @@ ALTER PUBLICATION supabase_realtime ADD TABLE record_dependencies;
 ALTER PUBLICATION supabase_realtime ADD TABLE catalog_action_types;
 ALTER PUBLICATION supabase_realtime ADD TABLE catalog_modalities;
 ALTER PUBLICATION supabase_realtime ADD TABLE catalog_dependencies;
+
+-- Permisos: las tablas creadas por SQL no heredan acceso a service_role por defecto
+GRANT USAGE ON SCHEMA public TO service_role, authenticated, anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO authenticated;
