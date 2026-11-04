@@ -32,22 +32,24 @@ export default function Navbar({
     <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
       <div className="flex items-center gap-4">
         <h1 className="text-base font-semibold tracking-tight text-slate-900">Ecosistema Vocacional</h1>
-        <nav className="flex gap-1">
-          {TABS.map((tab) => {
-            const active = pathname === tab.href;
-            return (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className={`rounded-md px-3 py-1.5 text-sm ${
-                  active ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            );
-          })}
-        </nav>
+        {pathname !== "/acceso" ? (
+          <nav className="flex gap-1">
+            {TABS.map((tab) => {
+              const active = pathname === tab.href;
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className={`rounded-md px-3 py-1.5 text-sm ${
+                    active ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </nav>
+        ) : null}
       </div>
       <div className="flex items-center gap-3 text-xs">
         <span
