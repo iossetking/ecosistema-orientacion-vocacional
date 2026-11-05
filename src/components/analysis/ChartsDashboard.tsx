@@ -37,7 +37,13 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
   const actionK = kpis(actionRecords);
   const normalGaps = records.filter((r) => r.dimension_id === 5).length;
   const normalMejoras = records.filter((r) => r.dimension_id === 7).length;
-  const normalDependencies = new Set(normalRecords.flatMap((r) => r.dependency_ids)).size;
+  const datosRecords = records.filter((r) => r.dimension_id === 4);
+  const generatedDatos = datosRecords.filter((r) => r.datos === "se_generan").length;
+  const requiredDatos = datosRecords.filter((r) => r.datos === "se_requieren").length;
+  const datosGeneratedPct =
+    generatedDatos + requiredDatos === 0
+      ? 0
+      : Math.round((generatedDatos / (generatedDatos + requiredDatos)) * 100);
   const actionNoFuncionaPct =
     actionRecords.length === 0
       ? 0
@@ -62,8 +68,8 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
             <p className="text-2xl font-semibold">{normalMejoras}</p>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Dependencias vinculadas</p>
-            <p className="text-2xl font-semibold">{normalDependencies}</p>
+            <p className="text-xs text-slate-500">Datos Generados</p>
+            <p className="text-2xl font-semibold">{datosGeneratedPct}%</p>
           </div>
         </div>
       </section>
