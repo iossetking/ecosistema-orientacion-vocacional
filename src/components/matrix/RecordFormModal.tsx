@@ -27,6 +27,7 @@ import {
   type CatalogDependency,
   type CatalogModality,
   type ActionRecordFormValues,
+  type DatosRecordFormValues,
   type MatrixRecord,
   type RecordFormValues,
 } from "@/types/matrix";
@@ -39,7 +40,8 @@ type FormValues = RecordFormValues &
       ActionRecordFormValues,
       "status" | "actionName" | "actionTypeId" | "organizer" | "executor" | "modalityId"
     >
-  >;
+  > &
+    Partial<Pick<DatosRecordFormValues, "datos">>;
 
 interface Props {
   open: boolean;
@@ -63,6 +65,7 @@ export default function RecordFormModal({
   dependencies,
 }: Props) {
   const isAction = dimensionId === ACTIONS_DIMENSION_ID;
+  const isDatos = dimensionId === 4;
   const dimension = DIMENSIONS.find((d) => d.id === dimensionId);
   const schema = useMemo(() => getRecordFormSchema(dimensionId), [dimensionId]);
 
@@ -81,6 +84,7 @@ export default function RecordFormModal({
       relatedStageIds: record?.related_stage_ids ?? [],
       description: record?.description ?? "",
       ...(isAction ? { status: record?.status ?? "sin_clasificar" } : {}),
+      ...(isDatos ? { datos: record?.datos ?? "se_generan" } : {}),
       dependencyIds: record?.dependency_ids ?? [],
       ...(isAction && record
         ? {
@@ -97,6 +101,7 @@ export default function RecordFormModal({
   const relatedStageIds = watch("relatedStageIds") ?? [];
   const dependencyIds = watch("dependencyIds") ?? [];
   const status = watch("status");
+  const datos = watch("datos");
 
   function toggleValue(list: number[], id: number): number[] {
     return list.includes(id) ? list.filter((v) => v !== id) : [...list, id];
@@ -234,6 +239,23 @@ export default function RecordFormModal({
                           {s.label}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
+              {isDatos ? (
+                <div className="space-y-2">
+                  <Label>Datos</Label>
+                  <Select
+                    value={datos ?? "se_generan"}
+                    onValueChange={(v) => setValue("datos", v as FormValues["datos"])}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="se_generan">Se generan</SelectItem>
+                      <SelectItem value="se_requieren">Se requieren</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

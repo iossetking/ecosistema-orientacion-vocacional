@@ -17,6 +17,7 @@ const baseValid = {
 
 const actionExtraValid = {
   status: "sin_clasificar",
+  datos: null,
   actionName: "Test vocacional industrial",
   actionTypeId: "3f2a1b2c-0000-4000-8000-000000000002",
   organizer: "SEMS",

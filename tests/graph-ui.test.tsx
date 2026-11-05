@@ -14,6 +14,7 @@ const snapshot: MatrixSnapshot = {
       related_stage_ids: [2],
       description: "Necesidad de orientación",
       status: "sin_clasificar",
+      datos: null,
       action_name: null,
       action_type_id: null,
       organizer: null,

@@ -18,6 +18,7 @@ const actionRecord = (id: string, typeId: string, name: string): MatrixRecord =>
   related_stage_ids: [],
   description: "Descripción de la acción",
   status: "existe_y_funciona",
+  datos: null,
   action_name: name,
   action_type_id: typeId,
   organizer: "SEMS",

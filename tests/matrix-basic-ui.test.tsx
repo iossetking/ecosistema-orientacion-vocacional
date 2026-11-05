@@ -15,6 +15,7 @@ const record: MatrixRecord = {
   related_stage_ids: [],
   description: "Orientación individual temprana",
   status: "existe_y_funciona",
+  datos: null,
   action_name: null,
   action_type_id: null,
   organizer: null,

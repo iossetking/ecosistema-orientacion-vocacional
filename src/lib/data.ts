@@ -1,5 +1,5 @@
 import { getServerSupabase } from "@/lib/supabase/server";
-import type { CatalogDependency, MatrixRecord, MatrixSnapshot, RecordStatus } from "@/types/matrix";
+import type { CatalogDependency, MatrixRecord, MatrixSnapshot, RecordDatos, RecordStatus } from "@/types/matrix";
 
 export interface RecordRow {
   id: string;
@@ -8,6 +8,7 @@ export interface RecordRow {
   related_stage_ids: number[];
   description: string;
   status: RecordStatus | null;
+  datos: RecordDatos | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;

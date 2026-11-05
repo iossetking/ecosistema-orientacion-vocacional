@@ -8,6 +8,11 @@ CREATE TYPE record_status AS ENUM (
   'sin_clasificar'
 );
 
+CREATE TYPE record_datos AS ENUM (
+  'se_generan',
+  'se_requieren'
+);
+
 CREATE TABLE catalog_action_types (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL UNIQUE,
@@ -40,6 +45,7 @@ CREATE TABLE matrix_records (
   related_stage_ids SMALLINT[] NOT NULL DEFAULT '{}',
   description TEXT NOT NULL,
   status record_status,
+  datos record_datos,
   action_name TEXT,
   action_type_id UUID REFERENCES catalog_action_types(id) ON DELETE SET NULL,
   organizer TEXT,

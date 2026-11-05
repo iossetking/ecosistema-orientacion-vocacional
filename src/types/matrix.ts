@@ -8,6 +8,8 @@ export type RecordStatus =
   | "requiere_fortalecimiento"
   | "sin_clasificar";
 
+export type RecordDatos = "se_generan" | "se_requieren";
+
 export interface CatalogActionType {
   id: string;
   name: string;
@@ -42,6 +44,7 @@ export interface MatrixRecord {
   related_stage_ids: number[];
   description: string;
   status: RecordStatus | null;
+  datos: RecordDatos | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;
@@ -74,6 +77,8 @@ export const recordStatusSchema = z.enum([
   "sin_clasificar",
 ]);
 
+export const recordDatosSchema = z.enum(["se_generan", "se_requieren"]);
+
 export const baseRecordFormSchema = z.object({
   dimensionId: z.number().int().min(1).max(7),
   primaryStageId: z.number().int().min(1).max(5),
@@ -91,12 +96,21 @@ export const actionRecordFormSchema = baseRecordFormSchema.extend({
   modalityId: z.string().uuid("Selecciona una modalidad"),
 });
 
+export const datosRecordFormSchema = baseRecordFormSchema.extend({
+  datos: recordDatosSchema,
+});
+export const dataRecordFormSchema = datosRecordFormSchema;
+
 export function getRecordFormSchema(dimensionId: number) {
-  return dimensionId === 3 ? actionRecordFormSchema : baseRecordFormSchema;
+  if (dimensionId === 3) return actionRecordFormSchema;
+  if (dimensionId === 4) return datosRecordFormSchema;
+  return baseRecordFormSchema;
 }
 
 export type RecordFormValues = z.infer<typeof baseRecordFormSchema>;
 export type ActionRecordFormValues = z.infer<typeof actionRecordFormSchema>;
+export type DatosRecordFormValues = z.infer<typeof datosRecordFormSchema>;
+export type DataRecordFormValues = DatosRecordFormValues;
 
 export const pinLoginSchema = z.object({
   name: z.string().trim().min(2, "Escribe tu nombre").max(100),
@@ -117,6 +131,7 @@ export interface RecordRow {
   related_stage_ids: number[];
   description: string;
   status: RecordStatus | null;
+  datos: RecordDatos | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;

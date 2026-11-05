@@ -9,6 +9,7 @@ const base: MatrixRecord = {
   related_stage_ids: [],
   description: "Original",
   status: null,
+  datos: null,
   action_name: null,
   action_type_id: null,
   organizer: null,

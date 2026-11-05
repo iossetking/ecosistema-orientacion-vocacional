@@ -8,6 +8,7 @@ const row = {
   related_stage_ids: [3],
   description: "Descripción",
   status: "existe_y_funciona",
+  datos: null,
   action_name: "Test vocacional",
   action_type_id: "22222222-2222-4222-8222-222222222222",
   organizer: "SEMS",

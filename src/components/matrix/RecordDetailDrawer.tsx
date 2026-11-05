@@ -84,6 +84,13 @@ export default function RecordDetailDrawer({
             </div>
           ) : null}
 
+          {record.dimension_id === 4 ? (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase text-slate-400">Datos</p>
+              <p>{record.datos === "se_requieren" ? "Se requieren" : "Se generan"}</p>
+            </div>
+          ) : null}
+
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase text-slate-400">Descripción</p>
             <p className="text-slate-700">{record.description}</p>

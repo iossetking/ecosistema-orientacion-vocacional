@@ -17,6 +17,7 @@ const baseRecord: MatrixRecord = {
   related_stage_ids: [3],
   description: "Taller de planeación de carrera",
   status: "requiere_fortalecimiento",
+  datos: null,
   action_name: "Taller de decisiones",
   action_type_id: "t1",
   organizer: "CGAI",

@@ -16,6 +16,7 @@ const r = (id: string, over: Partial<MatrixRecord>): MatrixRecord => ({
   related_stage_ids: [],
   description: `Registro ${id}`,
   status: "sin_clasificar",
+  datos: null,
   action_name: null,
   action_type_id: null,
   organizer: null,

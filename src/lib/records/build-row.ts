@@ -1,12 +1,14 @@
 import { ACTIONS_DIMENSION_ID } from "@/constants/matrix-config";
 import type {
   ActionRecordFormValues,
+  DatosRecordFormValues,
   RecordFormValues,
   RecordStatus,
+  RecordDatos,
   SessionUser,
 } from "@/types/matrix";
 
-export type AnyRecordFormValues = RecordFormValues | ActionRecordFormValues;
+export type AnyRecordFormValues = RecordFormValues | ActionRecordFormValues | DatosRecordFormValues;
 
 export interface RecordInsertRow {
   dimension_id: number;
@@ -14,6 +16,7 @@ export interface RecordInsertRow {
   related_stage_ids: number[];
   description: string;
   status: RecordStatus | null;
+  datos: RecordDatos | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;
@@ -36,6 +39,7 @@ function commonFields(input: AnyRecordFormValues) {
     related_stage_ids: input.relatedStageIds,
     description: input.description,
     status: isAction ? ((input as ActionRecordFormValues).status ?? null) : null,
+    datos: input.dimensionId === 4 ? (((input as DatosRecordFormValues).datos ?? "se_generan") as RecordDatos) : null,
     action_name: action?.actionName ?? null,
     action_type_id: action?.actionTypeId ?? null,
     organizer: action?.organizer ?? null,
