@@ -13,7 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DIMENSIONS, STAGES, STATUSES } from "@/constants/matrix-config";
+import { ACTIONS_DIMENSION_ID, DIMENSIONS, STAGES, STATUSES } from "@/constants/matrix-config";
 import type { MatrixSnapshot } from "@/types/matrix";
 import {
   actionsByCatalog,
@@ -32,29 +32,63 @@ export default function ChartsDashboard({ snapshot }: { snapshot: MatrixSnapshot
   const depData = countByDependency(records, dependencies);
   const typeData = actionsByCatalog(records, "action_type_id", actionTypes);
   const modalityData = actionsByCatalog(records, "modality_id", modalities);
-  const k = kpis(records);
+  const normalRecords = records.filter((r) => r.dimension_id !== ACTIONS_DIMENSION_ID);
+  const actionRecords = records.filter((r) => r.dimension_id === ACTIONS_DIMENSION_ID);
+  const actionK = kpis(actionRecords);
+  const normalGaps = records.filter((r) => r.dimension_id === 5).length;
+  const normalMejoras = records.filter((r) => r.dimension_id === 7).length;
+  const normalDependencies = new Set(normalRecords.flatMap((r) => r.dependency_ids)).size;
+  const actionNoFuncionaPct =
+    actionRecords.length === 0
+      ? 0
+      : Math.round((actionRecords.filter((r) => r.status === "no_funciona").length / actionRecords.length) * 100);
   const maxHeat = Math.max(1, ...heat.map((c) => c.count));
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <p className="text-xs text-slate-500">Total de registros</p>
-          <p className="text-2xl font-semibold">{k.total}</p>
+      <section className="space-y-2">
+        <h3 className="text-sm font-semibold text-slate-900">Registros generales</h3>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Total de registros</p>
+            <p className="text-2xl font-semibold">{normalRecords.length}</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Vacíos o barreras</p>
+            <p className="text-2xl font-semibold text-red-600">{normalGaps}</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Mejoras propuestas</p>
+            <p className="text-2xl font-semibold">{normalMejoras}</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Dependencias vinculadas</p>
+            <p className="text-2xl font-semibold">{normalDependencies}</p>
+          </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <p className="text-xs text-slate-500">Existe y funciona</p>
-          <p className="text-2xl font-semibold text-emerald-600">{k.workingPct}%</p>
+      </section>
+
+      <section className="space-y-2">
+        <h3 className="text-sm font-semibold text-slate-900">Acciones y recursos (Dimensión 3)</h3>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Total de registros</p>
+            <p className="text-2xl font-semibold">{actionRecords.length}</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Existe y funciona</p>
+            <p className="text-2xl font-semibold text-emerald-600">{actionK.workingPct}%</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">Requiere fortalecimiento</p>
+            <p className="text-2xl font-semibold text-blue-600">{actionK.strengtheningPct}%</p>
+          </div>
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <p className="text-xs text-slate-500">No funciona</p>
+            <p className="text-2xl font-semibold text-orange-600">{actionNoFuncionaPct}%</p>
+          </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <p className="text-xs text-slate-500">Requiere fortalecimiento</p>
-          <p className="text-2xl font-semibold text-blue-600">{k.strengtheningPct}%</p>
-        </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <p className="text-xs text-slate-500">Vacíos o barreras</p>
-          <p className="text-2xl font-semibold text-red-600">{k.gaps}</p>
-        </div>
-      </div>
+      </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg border border-slate-200 bg-white p-4">
