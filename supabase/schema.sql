@@ -39,7 +39,7 @@ CREATE TABLE matrix_records (
   primary_stage_id SMALLINT NOT NULL CHECK (primary_stage_id BETWEEN 1 AND 5),
   related_stage_ids SMALLINT[] NOT NULL DEFAULT '{}',
   description TEXT NOT NULL,
-  status record_status NOT NULL DEFAULT 'sin_clasificar',
+  status record_status,
   action_name TEXT,
   action_type_id UUID REFERENCES catalog_action_types(id) ON DELETE SET NULL,
   organizer TEXT,

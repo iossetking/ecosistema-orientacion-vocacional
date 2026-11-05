@@ -12,11 +12,11 @@ const baseValid = {
   primaryStageId: 2,
   relatedStageIds: [3],
   description: "Necesidad de orientación temprana",
-  status: "sin_clasificar",
   dependencyIds: ["3f2a1b2c-0000-4000-8000-000000000001"],
 };
 
 const actionExtraValid = {
+  status: "sin_clasificar",
   actionName: "Test vocacional industrial",
   actionTypeId: "3f2a1b2c-0000-4000-8000-000000000002",
   organizer: "SEMS",
@@ -38,7 +38,7 @@ describe("esquemas zod de registros", () => {
   });
 
   it("rechaza estado inválido", () => {
-    expect(baseRecordFormSchema.safeParse({ ...baseValid, status: "aprobado" }).success).toBe(false);
+    expect(actionRecordFormSchema.safeParse({ ...baseValid, ...actionExtraValid, status: "aprobado" }).success).toBe(false);
   });
 
   it("valida registro extendido de dimensión 3", () => {

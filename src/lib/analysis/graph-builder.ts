@@ -32,7 +32,7 @@ export type GraphNode = {
   kind: "record" | "stage" | "dependency";
   label: string;
   recordId?: string;
-  statusKey?: RecordStatus;
+  statusKey?: RecordStatus | null;
   statusColor?: string;
   stageId?: number;
   dimensionId?: number;
@@ -138,7 +138,7 @@ export function filterRecords(records: MatrixRecord[], filters: GraphFilters = {
       if (!filters.dimensionIds.includes(r.dimension_id)) return false;
     }
     if (filters.statusKeys && filters.statusKeys.length > 0) {
-      if (!filters.statusKeys.includes(r.status)) return false;
+      if (r.status === null || !filters.statusKeys.includes(r.status)) return false;
     }
     if (filters.dependencyIds && filters.dependencyIds.length > 0) {
       if (!filters.dependencyIds.some((d) => r.dependency_ids.includes(d))) return false;

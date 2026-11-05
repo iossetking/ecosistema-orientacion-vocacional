@@ -40,10 +40,10 @@ export default function RecordDetailDrawer({
         </SheetHeader>
 
         <div className="space-y-4 p-4 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="size-3 rounded-full" style={{ backgroundColor: status?.color }} />
-            <span className="font-medium">{status?.label}</span>
-          </div>
+<div className="flex items-center gap-2">
+  <span className="size-3 rounded-full" style={{ backgroundColor: status?.color ?? "#9ca3af" }} />
+  <span className="font-medium">{status?.label ?? "Sin estado"}</span>
+</div>
 
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase text-slate-400">Dimensión</p>

@@ -37,7 +37,7 @@ type FormValues = RecordFormValues &
   Partial<
     Pick<
       ActionRecordFormValues,
-      "actionName" | "actionTypeId" | "organizer" | "executor" | "modalityId"
+      "status" | "actionName" | "actionTypeId" | "organizer" | "executor" | "modalityId"
     >
   >;
 
@@ -80,7 +80,7 @@ export default function RecordFormModal({
       primaryStageId: record?.primary_stage_id ?? stageId,
       relatedStageIds: record?.related_stage_ids ?? [],
       description: record?.description ?? "",
-      status: record?.status ?? "sin_clasificar",
+      ...(isAction ? { status: record?.status ?? "sin_clasificar" } : {}),
       dependencyIds: record?.dependency_ids ?? [],
       ...(isAction && record
         ? {
@@ -218,24 +218,26 @@ export default function RecordFormModal({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Estado del registro</Label>
-                <Select
-                  value={status}
-                  onValueChange={(v) => setValue("status", v as FormValues["status"])}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((s) => (
-                      <SelectItem key={s.key} value={s.key}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {isAction ? (
+                <div className="space-y-2">
+                  <Label>Estado del registro</Label>
+                  <Select
+                    value={status}
+                    onValueChange={(v) => setValue("status", v as FormValues["status"])}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUSES.map((s) => (
+                        <SelectItem key={s.key} value={s.key}>
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
             </div>
           </section>
 

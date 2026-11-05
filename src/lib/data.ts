@@ -7,7 +7,7 @@ export interface RecordRow {
   primary_stage_id: number;
   related_stage_ids: number[];
   description: string;
-  status: RecordStatus;
+  status: RecordStatus | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;

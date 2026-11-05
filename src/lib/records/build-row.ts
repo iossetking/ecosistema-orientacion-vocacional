@@ -13,7 +13,7 @@ export interface RecordInsertRow {
   primary_stage_id: number;
   related_stage_ids: number[];
   description: string;
-  status: RecordStatus;
+  status: RecordStatus | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;
@@ -35,7 +35,7 @@ function commonFields(input: AnyRecordFormValues) {
     primary_stage_id: input.primaryStageId,
     related_stage_ids: input.relatedStageIds,
     description: input.description,
-    status: input.status,
+    status: isAction ? ((input as ActionRecordFormValues).status ?? null) : null,
     action_name: action?.actionName ?? null,
     action_type_id: action?.actionTypeId ?? null,
     organizer: action?.organizer ?? null,

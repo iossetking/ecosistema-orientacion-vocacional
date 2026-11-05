@@ -7,13 +7,13 @@ const baseInput = {
   primaryStageId: 1,
   relatedStageIds: [2],
   description: "Condición socioeconómica",
-  status: "requiere_fortalecimiento" as const,
   dependencyIds: ["3f2a1b2c-0000-4000-8000-0000000000aa"],
 };
 
 const actionInput = {
   ...baseInput,
   dimensionId: 3,
+  status: "requiere_fortalecimiento" as const,
   actionName: "Taller de decisiones",
   actionTypeId: "3f2a1b2c-0000-4000-8000-0000000000bb",
   organizer: "CGAI",
@@ -29,7 +29,7 @@ describe("buildCreateRow", () => {
     expect(row.dimension_id).toBe(2);
     expect(row.primary_stage_id).toBe(1);
     expect(row.related_stage_ids).toEqual([2]);
-    expect(row.status).toBe("requiere_fortalecimiento");
+    expect(row.status).toBeNull();
     expect(row.created_by_name).toBe("Ana");
     expect(row.updated_by_dependency).toBe("CGAI");
     expect(row.action_name).toBeNull();

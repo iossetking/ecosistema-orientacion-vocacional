@@ -71,6 +71,7 @@ export function getDimension(id: number): DimensionDef | undefined {
   return DIMENSIONS.find((d) => d.id === id);
 }
 
-export function getStatus(key: RecordStatus): StatusDef | undefined {
+export function getStatus(key: RecordStatus | null): StatusDef | undefined {
+  if (key === null) return undefined;
   return STATUSES.find((s) => s.key === key);
 }

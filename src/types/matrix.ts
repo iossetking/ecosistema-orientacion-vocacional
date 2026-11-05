@@ -41,7 +41,7 @@ export interface MatrixRecord {
   primary_stage_id: number;
   related_stage_ids: number[];
   description: string;
-  status: RecordStatus;
+  status: RecordStatus | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;
@@ -79,11 +79,11 @@ export const baseRecordFormSchema = z.object({
   primaryStageId: z.number().int().min(1).max(5),
   relatedStageIds: z.array(z.number().int().min(1).max(5)).max(5).default([]),
   description: z.string().trim().min(1, "La descripción es obligatoria").max(2000),
-  status: recordStatusSchema,
   dependencyIds: z.array(z.string().uuid()).default([]),
 });
 
 export const actionRecordFormSchema = baseRecordFormSchema.extend({
+  status: recordStatusSchema,
   actionName: z.string().trim().min(1, "El nombre de la acción es obligatorio").max(200),
   actionTypeId: z.string().uuid("Selecciona un tipo de acción o recurso"),
   organizer: z.string().trim().min(1, "Indica quién lo organiza").max(200),
@@ -116,7 +116,7 @@ export interface RecordRow {
   primary_stage_id: number;
   related_stage_ids: number[];
   description: string;
-  status: RecordStatus;
+  status: RecordStatus | null;
   action_name: string | null;
   action_type_id: string | null;
   organizer: string | null;

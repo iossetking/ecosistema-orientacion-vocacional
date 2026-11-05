@@ -8,7 +8,7 @@ const base: MatrixRecord = {
   primary_stage_id: 1,
   related_stage_ids: [],
   description: "Original",
-  status: "sin_clasificar",
+  status: null,
   action_name: null,
   action_type_id: null,
   organizer: null,
